@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path, { dirname, join } from "node:path";
@@ -47,6 +47,8 @@ async function createWindow() {
   win = new BrowserWindow({
     title: "sdfafasgdsa",
     autoHideMenuBar: true,
+    width: 1280, // 1024-1280-1600
+    height: 720, // 576-720-900
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production

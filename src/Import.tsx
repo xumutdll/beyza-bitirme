@@ -13,7 +13,7 @@ const Import: React.FC = () => {
         "file-path",
         event.dataTransfer.files[0].path
       );
-      navigate("/filter");
+      navigate("/panel");
 
       // Optionally, send the file path to your backend here or handle it as needed
     }
