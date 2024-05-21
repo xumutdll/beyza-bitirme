@@ -1,17 +1,22 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import React from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import Import from "./Import";
+import Filter from "./Filter";
+import Sort from "./Sort";
 
-import './index.css'
+import "./css/main.css";
 
-import './demos/ipc'
-// If you want use Node.js, the`nodeIntegration` needs to be enabled in the Main process.
-// import './demos/node'
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+    <HashRouter>
+      <Routes>
+        <Route index element={<Import />} />
+        <Route path="/Filter" element={<Filter />} />
+        <Route path="/Sort" element={<Sort />} />
+      </Routes>
+    </HashRouter>
+  </React.StrictMode>
+);
 
-postMessage({ payload: 'removeLoading' }, '*')
+postMessage({ payload: "removeLoading" }, "*");
