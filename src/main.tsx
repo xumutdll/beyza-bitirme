@@ -5,23 +5,22 @@ import Panel from "./Panel";
 import Import from "./Import";
 import Filter from "./Filter";
 import Sort from "./Sort";
-import { PrimeReactProvider } from "primereact/api";
+import "primereact/resources/themes/saga-blue/theme.css"; // Theme CSS
+import "primereact/resources/primereact.min.css"; // Core CSS
 
 import "./css/main.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <PrimeReactProvider>
-      <HashRouter>
-        <Routes>
-          <Route index element={<Import />} />
-          <Route path="/panel" element={<Panel />}>
-            <Route index element={<Filter />} />
-            <Route path="/panel/sort" element={<Sort />} />
-          </Route>
-        </Routes>
-      </HashRouter>
-    </PrimeReactProvider>
+    <HashRouter>
+      <Routes>
+        <Route index element={<Import />} />
+        <Route path="/panel" element={<Panel />}>
+          <Route index element={<Filter />} />
+          <Route path="/panel/sort" element={<Sort />} />
+        </Route>
+      </Routes>
+    </HashRouter>
   </React.StrictMode>
 );
 

@@ -1,76 +1,63 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import { ListBox } from "primereact/listbox";
 
 const Filter: React.FC = () => {
   const hasSentIpc = useRef(false);
-  const [headers, setHeaders] = useState<any>(null);
-  const [selectedCity, setSelectedCity] = useState(null);
+  const [headers, setHeaders] = useState<any[]>([]);
+  const [uniqueValues, setUniqueValues] = useState<{ [key: string]: any[] }>(
+    {}
+  );
+  const [selectedHeader, setSelectedHeader] = useState(null);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
     if (!hasSentIpc.current) {
-      window.electron.ipcRenderer.send("get-initial-data").then((data: any) => {
-        console.log(data);
-        // setHeaders(data);
-      });
+      window.electron.ipcRenderer
+        .send("get-initial-data")
+        .then((response: any) => {
+          const headerOptions = Object.keys(response).map((key) => ({
+            label: key,
+            value: key,
+          }));
+          setHeaders(headerOptions);
+          setUniqueValues(response);
+        });
       hasSentIpc.current = true;
     }
   }, []);
 
-  const groupedCities = [
-    {
-      label: "Germany",
-      code: "DE",
-      items: [
-        { label: "Berlin", value: "Berlin" },
-        { label: "Frankfurt", value: "Frankfurt" },
-        { label: "Hamburg", value: "Hamburg" },
-        { label: "Munich", value: "Munich" },
-      ],
-    },
-    {
-      label: "USA",
-      code: "US",
-      items: [
-        { label: "Chicago", value: "Chicago" },
-        { label: "Los Angeles", value: "Los Angeles" },
-        { label: "New York", value: "New York" },
-        { label: "San Francisco", value: "San Francisco" },
-      ],
-    },
-    {
-      label: "Japan",
-      code: "JP",
-      items: [
-        { label: "Kyoto", value: "Kyoto" },
-        { label: "Osaka", value: "Osaka" },
-        { label: "Tokyo", value: "Tokyo" },
-        { label: "Yokohama", value: "Yokohama" },
-      ],
-    },
-  ];
-
-  const groupTemplate = (option: any) => {
-    return (
-      <div className="flex align-items-center gap-2 ">
-        <div>{option.label}</div>
-      </div>
-    );
+  const handleHeaderChange = (e: any) => {
+    setSelectedHeader(e.value);
+    setSelectedValue(null); // Reset selected value when header changes
   };
 
   return (
     <div className="h-full">
       <div className="card flex justify-content-center">
         <ListBox
-          value={selectedCity}
-          onChange={(e) => setSelectedCity(e.value)}
-          options={groupedCities}
-          optionLabel="label"
-          optionGroupLabel="label"
-          optionGroupChildren="items"
-          optionGroupTemplate={groupTemplate}
-          className="bg-white text-black"
           filter
+          value={selectedHeader}
+          options={headers}
+          onChange={handleHeaderChange}
+          optionLabel="label"
+          className="w-fit mr-6"
+          listStyle={{ height: "80vh" }}
+        />
+        <ListBox
+          filter
+          value={selectedValue}
+          options={
+            selectedHeader
+              ? uniqueValues[selectedHeader].map((value) => ({
+                  label: value,
+                  value,
+                }))
+              : []
+          }
+          onChange={(e) => setSelectedValue(e.value)}
+          optionLabel="label"
+          className="w-3/12"
+          listStyle={{ height: "80vh" }}
         />
       </div>
     </div>
