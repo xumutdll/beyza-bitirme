@@ -89,7 +89,7 @@ const Filter: React.FC = () => {
         options={headers}
         onChange={(e) => setSelectedHeader(e.value)}
         optionLabel="label"
-        className="w-80 mr-4 bg-customWhite"
+        className="w-80 mr-4 bg-customWhite shadow-board"
         listStyle={{ maxHeight: "80vh" }}
       />
       <ListBox
@@ -104,12 +104,12 @@ const Filter: React.FC = () => {
         }
         onChange={(e) => handleAddFilter(e.value)}
         optionLabel="label"
-        className="w-3/12 bg-customWhite"
+        className="w-3/12 bg-customWhite shadow-board"
         listStyle={{ height: "80vh" }}
       />
 
       <Button
-        className="m-auto w-32 h-12 flex items-center justify-center"
+        className="mx-auto mt-44 w-32 h-12 flex items-center justify-center "
         onClick={() => setFilterType(!filterType)}
       >
         {filterType ? "Veya" : "Ve"}
@@ -122,7 +122,7 @@ const Filter: React.FC = () => {
           }))}
           onChange={(e) => handleRemoveFilter(e.value)}
           optionLabel="label"
-          className="bg-customWhite"
+          className="bg-customWhite shadow-board"
           listStyle={{
             height: "80vh",
           }}
@@ -130,7 +130,7 @@ const Filter: React.FC = () => {
 
         <Button
           onClick={handleApplyFilter}
-          className="flex items-center justify-center mt-auto outline-none"
+          className="flex items-center justify-center mt-auto shadow-btn bg-customBlack"
         >
           Filtreyi Uygula
         </Button>

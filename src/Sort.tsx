@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
 
+import "./css/main.css";
+
 const Sort: React.FC = () => {
   const hasSentIpc = useRef(false);
   const [headers, setHeaders] = useState<any[]>([]);
@@ -36,7 +38,7 @@ const Sort: React.FC = () => {
         options={headers}
         onChange={(e) => setSelectedHeader(e.value)}
         optionLabel="label"
-        className="w-80 mr-4 bg-customWhite"
+        className="w-80 mr-4 bg-customWhite shadow-board"
         listStyle={{ maxHeight: "80vh" }}
       />
       <ListBox
@@ -51,10 +53,15 @@ const Sort: React.FC = () => {
         }
         onChange={(e) => handleAddItemToList(e.value)}
         optionLabel="label"
-        className="w-3/12 bg-customWhite"
+        className="w-3/12 bg-customWhite shadow-board"
         listStyle={{ height: "80vh" }}
       />
-      <div className="bg-primary w-5/12 ml-auto"></div>
+      <div className="flex flex-col w-5/12 ml-auto">
+        <div className="bg-customWhite vh80 shadow-board"></div>
+        <Button className="flex items-center justify-center mt-auto shadow-btn bg-customBlack">
+          Sıralamayı Uygula
+        </Button>
+      </div>
     </div>
   );
 };

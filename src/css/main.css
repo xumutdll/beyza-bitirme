@@ -68,3 +68,7 @@ code {
   margin: 0 4px;
   border-radius: 4px;
 }
+
+.vh80 {
+  height: 80vh;
+}

@@ -6,8 +6,10 @@ export default {
       ...theme("colors"),
       primary: "#060644",
       secondary: "#404040",
-      tertiary: "#505050",
+      tertiary: "#606060",
+      customBlack: "#202020",
       customWhite: "#f1f1f1",
+      blurryWhite: "#e9ecef",
     }),
     textColor: (theme) => ({
       ...theme("colors"),
@@ -19,9 +21,9 @@ export default {
     }),
     boxShadow: (theme) => ({
       ...theme("colors"),
-      btn: "rgba(0, 0, 0, 0.3) 0px 3px 6px 0px inset",
-      board:
-        "rgba(0, 0, 0, 0.2) 0px 20px 30px -6px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+      btnBar: "rgba(0, 0, 0, 0.3) 0px 3px 6px 0px inset",
+      btn: "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+      board: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
       module:
         "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
     }),

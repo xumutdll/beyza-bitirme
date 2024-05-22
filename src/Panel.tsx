@@ -8,7 +8,7 @@ const Panel: React.FC = () => {
         <NavLink
           end
           to="/"
-          className="w-3/12 text-center py-2 rounded-md shadow-btn bg-customWhite"
+          className="w-3/12 text-center py-2 rounded-md shadow-btnBar bg-customWhite"
         >
           Yeni Dosya
         </NavLink>
@@ -17,7 +17,7 @@ const Panel: React.FC = () => {
           end
           to="/panel"
           className={({ isActive }) =>
-            `w-3/12 text-center py-2 rounded-md shadow-btn ml-auto ${
+            `w-3/12 text-center py-2 rounded-md shadow-btnBar ml-auto ${
               isActive ? "bg-tertiary" : "bg-secondary"
             }`
           }
@@ -28,7 +28,7 @@ const Panel: React.FC = () => {
         <NavLink
           to="/panel/sort"
           className={({ isActive }) =>
-            `w-3/12 text-center py-2 rounded-md shadow-btn ${
+            `w-3/12 text-center py-2 rounded-md shadow-btnBar ${
               isActive ? "bg-tertiary" : "bg-secondary"
             }`
           }
