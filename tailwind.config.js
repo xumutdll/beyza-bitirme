@@ -7,7 +7,7 @@ export default {
       primary: "#060644",
       secondary: "#404040",
       tertiary: "#505050",
-      customWhite: "#f9f9f9",
+      customWhite: "#f1f1f1",
     }),
     textColor: (theme) => ({
       ...theme("colors"),

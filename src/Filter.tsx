@@ -89,7 +89,7 @@ const Filter: React.FC = () => {
         options={headers}
         onChange={(e) => setSelectedHeader(e.value)}
         optionLabel="label"
-        className="w-fit mr-6 overflow"
+        className="w-80 mr-4 bg-customWhite"
         listStyle={{ maxHeight: "80vh" }}
       />
       <ListBox
@@ -104,7 +104,7 @@ const Filter: React.FC = () => {
         }
         onChange={(e) => handleAddFilter(e.value)}
         optionLabel="label"
-        className="w-3/12"
+        className="w-3/12 bg-customWhite"
         listStyle={{ height: "80vh" }}
       />
 
@@ -122,7 +122,7 @@ const Filter: React.FC = () => {
           }))}
           onChange={(e) => handleRemoveFilter(e.value)}
           optionLabel="label"
-          className=""
+          className="bg-customWhite"
           listStyle={{
             height: "80vh",
           }}
@@ -130,7 +130,7 @@ const Filter: React.FC = () => {
 
         <Button
           onClick={handleApplyFilter}
-          className="flex items-center justify-center mt-auto"
+          className="flex items-center justify-center mt-auto outline-none"
         >
           Filtreyi Uygula
         </Button>
