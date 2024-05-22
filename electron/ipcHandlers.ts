@@ -5,36 +5,30 @@ let jsonData: any[] = [];
 let headers: string[] = [];
 let uniqueValuesObject: { [key: string]: any[] } = {};
 let workbook: any;
-let path: string;
+let excelPath: string; // Renamed for clarity
 
-ipcMain.on("file-path", async (event, path) => {
-  path = path;
-  workbook = xlsx.readFile(path);
+ipcMain.on("file-path", async (event, filePath) => {
+  excelPath = filePath; // Use a different variable name for the parameter to avoid shadowing
+  workbook = xlsx.readFile(excelPath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   jsonData = xlsx.utils.sheet_to_json(worksheet) as any[];
 
   if (jsonData.length > 0) {
     headers = Object.keys(jsonData[0]);
 
-    // Create an object to store unique values for each header
     const uniqueValuesMap: { [key: string]: Set<any> } = {};
-
-    // Initialize a Set for each header
     headers.forEach((header) => {
       uniqueValuesMap[header] = new Set();
     });
 
-    // Populate the Set for each header with unique values from the data
     jsonData.forEach((item) => {
       headers.forEach((header) => {
         if (item[header]) {
-          // Skip empty values if not needed
           uniqueValuesMap[header].add(item[header]);
         }
       });
     });
 
-    // Convert Sets to arrays and log the result
     for (const [key, valueSet] of Object.entries(uniqueValuesMap)) {
       uniqueValuesObject[key] = Array.from(valueSet);
     }
@@ -47,17 +41,23 @@ ipcMain.on("get-initial-data", (event) => {
 
 ipcMain.on("apply-filter", (event, filter) => {
   const filteredData = jsonData.filter((item) => {
-    // Use 'some' to apply 'OR' logic for exclusion
     return !filter.some((condition: any) => {
       if (Array.isArray(condition)) {
-        // Use 'every' to apply 'AND' logic within a sub-array
         return condition.every((cond) => item[cond.header] === cond.value);
       } else {
-        // Direct condition comparison for exclusion
         return item[condition.header] === condition.value;
       }
     });
   });
 
-  // event.reply("apply-filter-reply", filteredData);
+  const newWorksheet = xlsx.utils.json_to_sheet(filteredData);
+  const sheetName = "Filtered Data";
+
+  if (!workbook.Sheets[sheetName]) {
+    xlsx.utils.book_append_sheet(workbook, newWorksheet, sheetName);
+  } else {
+    workbook.Sheets[sheetName] = newWorksheet;
+  }
+
+  xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
 });
