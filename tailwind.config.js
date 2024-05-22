@@ -8,8 +8,8 @@ export default {
       secondary: "#404040",
       tertiary: "#606060",
       customBlack: "#202020",
-      customWhite: "#f1f1f1",
-      blurryWhite: "#e9ecef",
+      customWhite: "#f0f0f0",
+      blurryWhite: "#dddddd",
     }),
     textColor: (theme) => ({
       ...theme("colors"),

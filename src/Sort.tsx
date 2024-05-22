@@ -57,7 +57,9 @@ const Sort: React.FC = () => {
         listStyle={{ height: "80vh" }}
       />
       <div className="flex flex-col w-5/12 ml-auto">
-        <div className="bg-customWhite vh80 shadow-board"></div>
+        <div className="bg-customWhite vh80 shadow-board">
+          <div className="bg-blurryWhite h-12 w-full"></div>
+        </div>
         <Button className="flex items-center justify-center mt-auto shadow-btn bg-customBlack">
           Sıralamayı Uygula
         </Button>
