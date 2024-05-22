@@ -1,13 +1,15 @@
 import { ipcMain } from "electron";
 import xlsx from "xlsx";
-import { writeFile } from "fs";
 
 let jsonData: any[] = [];
 let headers: string[] = [];
 let uniqueValuesObject: { [key: string]: any[] } = {};
+let workbook: any;
+let path: string;
 
-ipcMain.on("file-path", async (e, path) => {
-  const workbook = xlsx.readFile(path);
+ipcMain.on("file-path", async (event, path) => {
+  path = path;
+  workbook = xlsx.readFile(path);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   jsonData = xlsx.utils.sheet_to_json(worksheet) as any[];
 
@@ -36,18 +38,26 @@ ipcMain.on("file-path", async (e, path) => {
     for (const [key, valueSet] of Object.entries(uniqueValuesMap)) {
       uniqueValuesObject[key] = Array.from(valueSet);
     }
-    //   const jsonString = JSON.stringify(jsonData, null, 2); // null, 2 for pretty-printing
-
-    //   writeFile("output.json", jsonString, (err) => {
-    //     if (err) {
-    //       console.error("Failed to save JSON data:", err);
-    //     } else {
-    //       console.log("JSON data saved successfully to output.json");
-    //     }
-    //   });
   }
 });
 
 ipcMain.on("get-initial-data", (event) => {
   event.reply("get-initial-data-reply", uniqueValuesObject);
+});
+
+ipcMain.on("apply-filter", (event, filter) => {
+  const filteredData = jsonData.filter((item) => {
+    // Use 'some' to apply 'OR' logic for exclusion
+    return !filter.some((condition: any) => {
+      if (Array.isArray(condition)) {
+        // Use 'every' to apply 'AND' logic within a sub-array
+        return condition.every((cond) => item[cond.header] === cond.value);
+      } else {
+        // Direct condition comparison for exclusion
+        return item[condition.header] === condition.value;
+      }
+    });
+  });
+
+  // event.reply("apply-filter-reply", filteredData);
 });

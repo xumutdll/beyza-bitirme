@@ -4,7 +4,7 @@ import { NavLink, Outlet } from "react-router-dom";
 const Panel: React.FC = () => {
   return (
     <div className="grid grid-rows-[auto_1fr] px-3 h-screen ">
-      <div className="mt-1 mb-6 flex">
+      <div className="mt-1 mb-2 flex">
         <NavLink
           end
           to="/"
