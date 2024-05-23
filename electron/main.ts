@@ -45,7 +45,6 @@ const indexHtml = path.join(RENDERER_DIST, "index.html");
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: "sdfafasgdsa",
     autoHideMenuBar: true,
     width: 1280, // 1024-1280-1600
     height: 720, // 576-720-900
