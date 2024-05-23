@@ -29,9 +29,9 @@ const Import: React.FC = () => {
 
   return (
     <div
-      className="h-screen flex justify-center items-center bg-gray-100 text-gray-800 text-4xl font-bold"
-      //  className="h-screen flex justify-center items-center bg-gray-100 text-gray-800 text-4xl font-bold"
-      // className="h-screen flex justify-center items-center bg-gray-900 text-blue-400 text-4xl font-bold"
+      className="h-screen flex justify-center items-center bg-gray-100 text-gray-800 text-4xl font-bold select-none"
+      //  className="h-screen flex justify-center items-center bg-gray-100 text-gray-800 text-4xl font-bold select-none"
+      // className="h-screen flex justify-center items-center bg-gray-900 text-blue-400 text-4xl font-bold select-none"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >

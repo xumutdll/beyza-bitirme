@@ -72,3 +72,8 @@ code {
 .vh80 {
   height: 80vh;
 }
+
+.minW350 {
+  min-width: 350px;
+  width: fit-content;
+}

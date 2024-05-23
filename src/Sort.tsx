@@ -30,6 +30,14 @@ const Sort: React.FC = () => {
 
   const handleAddItemToList = (item: string) => {};
 
+  const itemTemplate = (option: any) => {
+    return (
+      <div className="min-h-fit p-0 m-0 font-medium flex items-center">
+        {option.label}
+      </div>
+    );
+  };
+
   return (
     <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
       <ListBox
@@ -38,8 +46,9 @@ const Sort: React.FC = () => {
         options={headers}
         onChange={(e) => setSelectedHeader(e.value)}
         optionLabel="label"
-        className="w-80 mr-4 bg-customWhite shadow-board"
-        listStyle={{ maxHeight: "80vh" }}
+        className="minW350 mr-4 bg-customWhite shadow-board"
+        listStyle={{ height: "80vh" }}
+        itemTemplate={itemTemplate}
       />
       <ListBox
         filter
@@ -55,6 +64,7 @@ const Sort: React.FC = () => {
         optionLabel="label"
         className="w-3/12 bg-customWhite shadow-board"
         listStyle={{ height: "80vh" }}
+        itemTemplate={itemTemplate}
       />
       <div className="flex flex-col w-5/12 ml-auto">
         <div className="bg-customWhite vh80 shadow-board rounded">

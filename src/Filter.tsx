@@ -3,6 +3,8 @@ import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
+import "./css/main.css";
+
 const Filter: React.FC = () => {
   const navigate = useNavigate();
   const hasSentIpc = useRef(false);
@@ -77,9 +79,13 @@ const Filter: React.FC = () => {
     navigate("/panel/sort");
   };
 
-  useEffect(() => {
-    console.log(filter);
-  }, [filter]);
+  const itemTemplate = (option: any) => {
+    return (
+      <div className="min-h-fit p-0 m-0 font-medium flex items-center">
+        {option.label}
+      </div>
+    );
+  };
 
   return (
     <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
@@ -89,8 +95,9 @@ const Filter: React.FC = () => {
         options={headers}
         onChange={(e) => setSelectedHeader(e.value)}
         optionLabel="label"
-        className="w-80 mr-4 bg-customWhite shadow-board"
-        listStyle={{ maxHeight: "80vh" }}
+        className="minW350 mr-4 bg-customWhite shadow-board"
+        listStyle={{ height: "80vh" }}
+        itemTemplate={itemTemplate}
       />
       <ListBox
         filter
@@ -106,10 +113,11 @@ const Filter: React.FC = () => {
         optionLabel="label"
         className="w-3/12 bg-customWhite shadow-board"
         listStyle={{ height: "80vh" }}
+        itemTemplate={itemTemplate}
       />
 
       <Button
-        className="mx-auto mt-44 w-32 h-12 flex items-center justify-center "
+        className="mx-auto mt-44 w-32 h-12 flex items-center justify-center"
         onClick={() => setFilterType(!filterType)}
       >
         {filterType ? "Veya" : "Ve"}
@@ -122,10 +130,9 @@ const Filter: React.FC = () => {
           }))}
           onChange={(e) => handleRemoveFilter(e.value)}
           optionLabel="label"
-          className="bg-customWhite shadow-board"
-          listStyle={{
-            height: "80vh",
-          }}
+          className="bg-customWhite shadow-board select-none"
+          listStyle={{ height: "80vh" }}
+          itemTemplate={itemTemplate}
         />
 
         <Button
