@@ -17,7 +17,6 @@ ipcMain.on("file-path", async (event, filePath) => {
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   jsonData = xlsx.utils.sheet_to_json(worksheet, {
     raw: false,
-    dateNF: "yyyy-mm-dd",
   }) as any[];
 
   if (jsonData.length > 0) {
