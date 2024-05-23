@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import "./css/main.css";
 
 const Filter: React.FC = () => {
-  const navigate = useNavigate();
   const hasSentIpc = useRef(false);
   const [headers, setHeaders] = useState<any[]>([]);
   const [uniqueValues, setUniqueValues] = useState<{ [key: string]: any[] }>(
@@ -81,22 +79,20 @@ const Filter: React.FC = () => {
     );
 
     if (reply[0]) {
-      await Swal.fire({
+      Swal.fire({
         title: "Başarılı",
         text: reply[1],
         icon: "success",
         confirmButtonText: "Tamam",
       });
     } else {
-      await Swal.fire({
+      Swal.fire({
         title: "Beklenmedik bir hata ile karşılaşıldı.",
         text: reply[1],
         icon: "error",
         confirmButtonText: "Tamam",
       });
     }
-
-    navigate("/panel/sort");
   };
 
   const itemTemplate = (option: any) => {
@@ -106,6 +102,10 @@ const Filter: React.FC = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
 
   return (
     <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">

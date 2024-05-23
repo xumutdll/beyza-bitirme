@@ -39,7 +39,7 @@ ipcMain.on("get-initial-data", (event) => {
   event.reply("get-initial-data-reply", uniqueValuesObject);
 });
 
-ipcMain.on("apply-filter", (event, filter) => {
+ipcMain.on("apply-filter", async (event, filter) => {
   try {
     const filteredData = jsonData.filter((item) => {
       return !filter.some((condition: any) => {
@@ -72,7 +72,7 @@ ipcMain.on("apply-filter", (event, filter) => {
       workbook.Sheets[sheetName] = newWorksheet;
     }
 
-    xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
 
     event.reply("apply-filter-reply", [true, "Filtre uygulandı."]);
   } catch (error) {
@@ -81,7 +81,7 @@ ipcMain.on("apply-filter", (event, filter) => {
   }
 });
 
-ipcMain.on("apply-sorter", (event, sorter) => {
+ipcMain.on("apply-sorter", async (event, sorter) => {
   try {
     event.reply("apply-sorter-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {

@@ -93,7 +93,6 @@ const Sort: React.FC = () => {
         });
       }
     } else {
-      // Not all fields are filled, alert the user
       Swal.fire({
         title: "Tamamlanmamış alanlar",
         text: "Tüm 'Öncelik' ve 'Adet' alanları doldurulmadan sıralama uygulanamaz.",
@@ -102,6 +101,7 @@ const Sort: React.FC = () => {
       });
     }
   };
+
   const itemTemplate = (option: any) => {
     return (
       <div className="min-h-fit p-0 m-0 font-medium flex items-center">
