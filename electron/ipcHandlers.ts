@@ -75,7 +75,7 @@ ipcMain.on("apply-filter", async (event, filter) => {
   }
 });
 
-ipcMain.on("apply-grouper", async (event, grouper) => {
+ipcMain.on("apply-grouping", async (event, grouper) => {
   try {
     let data = workbook.SheetNames.includes(filteredSheetName)
       ? filteredJsonData
@@ -97,9 +97,9 @@ ipcMain.on("apply-grouper", async (event, grouper) => {
 
     await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
 
-    event.reply("apply-grouper-reply", [true, "Sıralama uygulandı."]);
+    event.reply("apply-grouping-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {
     console.error("Error applying sorter:", error);
-    event.reply("apply-grouper-reply", [false, "Sıralama uygulanamadı."]);
+    event.reply("apply-grouping-reply", [false, "Sıralama uygulanamadı."]);
   }
 });

@@ -74,7 +74,7 @@ const Sort: React.FC = () => {
 
     if (allFieldsFilled) {
       const reply = await window.electron.ipcRenderer.send(
-        "apply-grouper",
+        "apply-grouping",
         sorter
       );
       if (reply[0]) {
