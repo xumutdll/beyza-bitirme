@@ -31,7 +31,10 @@ const Sort: React.FC = () => {
   }, []);
 
   const handleAddItemToSorter = (item: string) => {
-    setSorter([...sorter, { header: selectedHeader, value: item }]);
+    setSorter([
+      ...sorter,
+      { header: selectedHeader, value: item, priority: "", number: "" },
+    ]);
   };
 
   const handleRemoveItemFromSorter = (itemToRemove: string) => {
@@ -52,6 +55,15 @@ const Sort: React.FC = () => {
   useEffect(() => {
     console.log(sorter);
   }, [sorter]);
+
+  const handleInputChange = (index: number, field: string, value: string) => {
+    if (/^\d*$/.test(value)) {
+      // Allows only digits
+      const newSorter = [...sorter];
+      newSorter[index][field] = value;
+      setSorter(newSorter);
+    }
+  };
 
   return (
     <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
@@ -90,7 +102,10 @@ const Sort: React.FC = () => {
                 index === 0 && "rounded-t"
               }`}
             >
-              <div onClick={() => handleRemoveItemFromSorter(item.value)}>
+              <div
+                className="w-full h-full flex items-center"
+                onClick={() => handleRemoveItemFromSorter(item.value)}
+              >
                 {item.header} {"-->"} {item.value}
               </div>
               <div className="ml-auto flex">
@@ -98,11 +113,19 @@ const Sort: React.FC = () => {
                   type="text"
                   className="p-inputtext-sm w-16 mr-2"
                   placeholder="Öncelik"
+                  value={item.priority}
+                  onChange={(e) =>
+                    handleInputChange(index, "priority", e.target.value)
+                  }
                 />
                 <InputText
                   type="text"
                   className="p-inputtext-sm w-16"
                   placeholder="Adet"
+                  value={item.number}
+                  onChange={(e) =>
+                    handleInputChange(index, "number", e.target.value)
+                  }
                 />
               </div>
             </div>
