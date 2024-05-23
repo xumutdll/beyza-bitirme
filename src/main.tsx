@@ -6,7 +6,7 @@ import Import from "./Import";
 import Filter from "./Filter";
 import Sort from "./Sort";
 import "primereact/resources/themes/saga-blue/theme.css"; // Theme CSS
-import "primereact/resources/primereact.min.css"; // Core CSS
+// import "primereact/resources/primereact.min.css"; // Core CSS
 
 import "./css/main.css";
 

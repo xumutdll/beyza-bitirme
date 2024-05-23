@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 
 import "./css/main.css";
 
@@ -11,6 +12,7 @@ const Sort: React.FC = () => {
     {}
   );
   const [selectedHeader, setSelectedHeader] = useState(null);
+  const [sorter, setSorter] = useState<any[]>([]);
 
   useEffect(() => {
     if (!hasSentIpc.current) {
@@ -28,7 +30,16 @@ const Sort: React.FC = () => {
     }
   }, []);
 
-  const handleAddItemToList = (item: string) => {};
+  const handleAddItemToSorter = (item: string) => {
+    setSorter([...sorter, { header: selectedHeader, value: item }]);
+  };
+
+  const handleRemoveItemFromSorter = (itemToRemove: string) => {
+    const newSorter = sorter.filter(
+      (sortItem) => sortItem.value !== itemToRemove
+    );
+    setSorter(newSorter);
+  };
 
   const itemTemplate = (option: any) => {
     return (
@@ -37,6 +48,10 @@ const Sort: React.FC = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    console.log(sorter);
+  }, [sorter]);
 
   return (
     <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
@@ -60,7 +75,7 @@ const Sort: React.FC = () => {
               }))
             : []
         }
-        onChange={(e) => handleAddItemToList(e.value)}
+        onChange={(e) => handleAddItemToSorter(e.value)}
         optionLabel="label"
         className="w-3/12 bg-customWhite shadow-board"
         listStyle={{ height: "80vh" }}
@@ -68,7 +83,30 @@ const Sort: React.FC = () => {
       />
       <div className="flex flex-col w-5/12 ml-auto">
         <div className="bg-customWhite vh80 shadow-board rounded">
-          {/* <div className="bg-blurryWhite h-12 w-full"></div> */}
+          {sorter.map((item, index) => (
+            <div
+              key={index}
+              className={`flex items-center bg-blurryWhite h-12 w-full text-primary font-medium px-4 mb-2 ${
+                index === 0 && "rounded-t"
+              }`}
+            >
+              <div onClick={() => handleRemoveItemFromSorter(item.value)}>
+                {item.header} {"-->"} {item.value}
+              </div>
+              <div className="ml-auto flex">
+                <InputText
+                  type="text"
+                  className="p-inputtext-sm w-16 mr-2"
+                  placeholder="Öncelik"
+                />
+                <InputText
+                  type="text"
+                  className="p-inputtext-sm w-16"
+                  placeholder="Adet"
+                />
+              </div>
+            </div>
+          ))}
         </div>
         <Button className="flex items-center justify-center mt-auto shadow-btn bg-customBlack">
           Sıralamayı Uygula

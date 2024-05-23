@@ -14,7 +14,7 @@ export default {
     textColor: (theme) => ({
       ...theme("colors"),
       customRed: "#ff1e1e",
-      primary: "#060644",
+      primary: "#495057",
       customGreen: "#006400",
       customOrange: "#f38f19", // No use
       customGrey: "#777777",
