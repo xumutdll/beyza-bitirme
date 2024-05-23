@@ -6,12 +6,19 @@ let headers: string[] = [];
 let uniqueValuesObject: { [key: string]: any[] } = {};
 let workbook: any;
 let excelPath: string;
+let filteredJsonData: any[] = [];
+
+const filteredSheetName = "Filtered Data";
+const sortedSheetName = "Sorted Data";
 
 ipcMain.on("file-path", async (event, filePath) => {
   excelPath = filePath;
   workbook = xlsx.readFile(excelPath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  jsonData = xlsx.utils.sheet_to_json(worksheet) as any[];
+  jsonData = xlsx.utils.sheet_to_json(worksheet, {
+    raw: false,
+    dateNF: "yyyy-mm-dd",
+  }) as any[];
 
   if (jsonData.length > 0) {
     headers = Object.keys(jsonData[0]);
@@ -50,26 +57,14 @@ ipcMain.on("apply-filter", async (event, filter) => {
         }
       });
     });
+    filteredJsonData = filteredData;
 
     const newWorksheet = xlsx.utils.json_to_sheet(filteredData);
-    const sheetName = "Filtered Data";
 
-    const ref = newWorksheet["!ref"];
-    if (ref) {
-      const range = xlsx.utils.decode_range(ref);
-      for (let row = range.s.r + 1; row <= range.e.r; row++) {
-        // Start at row 1 to skip header
-        const cellAddress = xlsx.utils.encode_cell({ c: 2, r: row }); // Column C is index 2
-        if (newWorksheet[cellAddress]) {
-          newWorksheet[cellAddress].z = "mm/dd/yyyy"; // Set format as short date
-        }
-      }
-    }
-
-    if (!workbook.Sheets[sheetName]) {
-      xlsx.utils.book_append_sheet(workbook, newWorksheet, sheetName);
+    if (!workbook.Sheets[filteredSheetName]) {
+      xlsx.utils.book_append_sheet(workbook, newWorksheet, filteredSheetName);
     } else {
-      workbook.Sheets[sheetName] = newWorksheet;
+      workbook.Sheets[filteredSheetName] = newWorksheet;
     }
 
     await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
@@ -83,6 +78,28 @@ ipcMain.on("apply-filter", async (event, filter) => {
 
 ipcMain.on("apply-sorter", async (event, sorter) => {
   try {
+    const data = workbook.SheetNames.includes(filteredSheetName)
+      ? filteredJsonData
+      : jsonData;
+
+    // Sort the data based on the "Date" column
+    data.sort((a: any, b: any) => {
+      // Explicitly converting dates to timestamps for comparison
+      const dateA = new Date(a["Date"]).getTime();
+      const dateB = new Date(b["Date"]).getTime();
+      return dateA - dateB; // For ascending order
+    });
+
+    const newWorksheet = xlsx.utils.json_to_sheet(data);
+
+    if (!workbook.Sheets[filteredSheetName]) {
+      xlsx.utils.book_append_sheet(workbook, newWorksheet, sortedSheetName);
+    } else {
+      workbook.Sheets[filteredSheetName] = newWorksheet;
+    }
+
+    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+
     event.reply("apply-sorter-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {
     console.error("Error applying sorter:", error);
