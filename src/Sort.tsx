@@ -31,7 +31,7 @@ const Sort: React.FC = () => {
   const handleAddItemToList = (item: string) => {};
 
   return (
-    <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded-md shadow-board">
+    <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
       <ListBox
         filter
         value={selectedHeader}
@@ -57,8 +57,8 @@ const Sort: React.FC = () => {
         listStyle={{ height: "80vh" }}
       />
       <div className="flex flex-col w-5/12 ml-auto">
-        <div className="bg-customWhite vh80 shadow-board">
-          <div className="bg-blurryWhite h-12 w-full"></div>
+        <div className="bg-customWhite vh80 shadow-board rounded">
+          {/* <div className="bg-blurryWhite h-12 w-full"></div> */}
         </div>
         <Button className="flex items-center justify-center mt-auto shadow-btn bg-customBlack">
           Sıralamayı Uygula

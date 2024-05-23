@@ -82,7 +82,7 @@ const Filter: React.FC = () => {
   }, [filter]);
 
   return (
-    <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded-md shadow-board">
+    <div className="h-full flex justify-content-center bg-secondary px-4 py-3 rounded shadow-board">
       <ListBox
         filter
         value={selectedHeader}

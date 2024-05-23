@@ -46,8 +46,8 @@ const indexHtml = path.join(RENDERER_DIST, "index.html");
 async function createWindow() {
   win = new BrowserWindow({
     autoHideMenuBar: true,
-    width: 1280, // 1024-1280-1600
-    height: 720, // 576-720-900
+    width: 1280, // 1152-1280-1600
+    height: 800, // 864-800-900
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
