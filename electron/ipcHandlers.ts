@@ -40,36 +40,52 @@ ipcMain.on("get-initial-data", (event) => {
 });
 
 ipcMain.on("apply-filter", (event, filter) => {
-  const filteredData = jsonData.filter((item) => {
-    return !filter.some((condition: any) => {
-      if (Array.isArray(condition)) {
-        return condition.every((cond) => item[cond.header] === cond.value);
-      } else {
-        return item[condition.header] === condition.value;
-      }
+  try {
+    const filteredData = jsonData.filter((item) => {
+      return !filter.some((condition: any) => {
+        if (Array.isArray(condition)) {
+          return condition.every((cond) => item[cond.header] === cond.value);
+        } else {
+          return item[condition.header] === condition.value;
+        }
+      });
     });
-  });
 
-  const newWorksheet = xlsx.utils.json_to_sheet(filteredData);
-  const sheetName = "Filtered Data";
+    const newWorksheet = xlsx.utils.json_to_sheet(filteredData);
+    const sheetName = "Filtered Data";
 
-  const ref = newWorksheet["!ref"];
-  if (ref) {
-    const range = xlsx.utils.decode_range(ref);
-    for (let row = range.s.r + 1; row <= range.e.r; row++) {
-      // Start at row 1 to skip header
-      const cellAddress = xlsx.utils.encode_cell({ c: 2, r: row }); // Column C is index 2
-      if (newWorksheet[cellAddress]) {
-        newWorksheet[cellAddress].z = "mm/dd/yyyy"; // Set format as short date
+    const ref = newWorksheet["!ref"];
+    if (ref) {
+      const range = xlsx.utils.decode_range(ref);
+      for (let row = range.s.r + 1; row <= range.e.r; row++) {
+        // Start at row 1 to skip header
+        const cellAddress = xlsx.utils.encode_cell({ c: 2, r: row }); // Column C is index 2
+        if (newWorksheet[cellAddress]) {
+          newWorksheet[cellAddress].z = "mm/dd/yyyy"; // Set format as short date
+        }
       }
     }
-  }
 
-  if (!workbook.Sheets[sheetName]) {
-    xlsx.utils.book_append_sheet(workbook, newWorksheet, sheetName);
-  } else {
-    workbook.Sheets[sheetName] = newWorksheet;
-  }
+    if (!workbook.Sheets[sheetName]) {
+      xlsx.utils.book_append_sheet(workbook, newWorksheet, sheetName);
+    } else {
+      workbook.Sheets[sheetName] = newWorksheet;
+    }
 
-  xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+
+    event.reply("apply-filter-reply", [true, "Filtre uygulandı."]);
+  } catch (error) {
+    console.error("Error applying filter:", error);
+    event.reply("apply-filter-reply", [false, "Filtre uygulanamadı."]);
+  }
+});
+
+ipcMain.on("apply-sorter", (event, sorter) => {
+  try {
+    event.reply("apply-sorter-reply", [true, "Sıralama uygulandı."]);
+  } catch (error) {
+    console.error("Error applying sorter:", error);
+    event.reply("apply-sorter-reply", [false, "Sıralama uygulanamadı."]);
+  }
 });

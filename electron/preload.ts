@@ -1,7 +1,11 @@
 import { ipcRenderer, contextBridge, IpcRendererEvent } from "electron";
 
 // --------- Expose some API to the Renderer process ---------
-export type Channels = "file-path" | "get-initial-data" | "apply-filter";
+export type Channels =
+  | "file-path"
+  | "get-initial-data"
+  | "apply-filter"
+  | "apply-sorter";
 
 const electronHandler = {
   ipcRenderer: {

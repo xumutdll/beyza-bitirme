@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import "./css/main.css";
 
@@ -73,8 +74,27 @@ const Filter: React.FC = () => {
     );
   };
 
-  const handleApplyFilter = () => {
-    window.electron.ipcRenderer.send("apply-filter", filter);
+  const handleApplyFilter = async () => {
+    const reply = await window.electron.ipcRenderer.send(
+      "apply-filter",
+      filter
+    );
+
+    if (reply[0]) {
+      await Swal.fire({
+        title: "Başarılı",
+        text: reply[1],
+        icon: "success",
+        confirmButtonText: "Tamam",
+      });
+    } else {
+      await Swal.fire({
+        title: "Beklenmedik bir hata ile karşılaşıldı.",
+        text: reply[1],
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
+    }
 
     navigate("/panel/sort");
   };
