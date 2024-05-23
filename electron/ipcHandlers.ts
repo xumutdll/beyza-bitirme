@@ -81,23 +81,18 @@ ipcMain.on("apply-sorter", async (event, sorter) => {
       ? filteredJsonData
       : jsonData;
 
-    // Sort the data based on the "Date" column
-    data.sort((a: any, b: any) => {
-      // Explicitly converting dates to timestamps for comparison
-      const dateA = new Date(a["Date"]).getTime();
-      const dateB = new Date(b["Date"]).getTime();
-      return dateA - dateB; // For ascending order
-    });
+    sorter.sort(
+      (a: any, b: any) => parseInt(a.priority) - parseInt(b.priority)
+    );
+    // const newWorksheet = xlsx.utils.json_to_sheet(data);
 
-    const newWorksheet = xlsx.utils.json_to_sheet(data);
+    // if (!workbook.Sheets[filteredSheetName]) {
+    //   xlsx.utils.book_append_sheet(workbook, newWorksheet, sortedSheetName);
+    // } else {
+    //   workbook.Sheets[filteredSheetName] = newWorksheet;
+    // }
 
-    if (!workbook.Sheets[filteredSheetName]) {
-      xlsx.utils.book_append_sheet(workbook, newWorksheet, sortedSheetName);
-    } else {
-      workbook.Sheets[filteredSheetName] = newWorksheet;
-    }
-
-    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    // await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
 
     event.reply("apply-sorter-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {
