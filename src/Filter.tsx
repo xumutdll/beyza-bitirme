@@ -34,18 +34,35 @@ const Filter: React.FC = () => {
   const handleAddFilter = (item: string) => {
     const filterItem = { header: selectedHeader, value: item };
 
+    // Helper function to check for item existence in an array
+    const itemExistsInArray = (arr: any, item: any) =>
+      arr.some(
+        (el: any) => el.header === item.header && el.value === item.value
+      );
+
     if (filterType) {
-      // 'OR' logic: Add directly to the filter array
-      setFilter([...filter, filterItem]);
+      // 'OR' logic
+      // Check if the item already exists in the main filter array
+      if (
+        !itemExistsInArray(
+          filter.filter((item) => !Array.isArray(item)),
+          filterItem
+        )
+      ) {
+        setFilter([...filter, filterItem]);
+      }
     } else {
-      // 'AND' logic: Add as a group or to the last group
+      // 'AND' logic
       const lastElement = filter[filter.length - 1];
-      if (Array.isArray(lastElement) && !filterType) {
-        // Add to the existing group
-        lastElement.push(filterItem);
-        setFilter([...filter.slice(0, -1), lastElement]);
+      if (Array.isArray(lastElement)) {
+        // Check if the item already exists in the last group
+        if (!itemExistsInArray(lastElement, filterItem)) {
+          // Add to the existing group if not already included
+          lastElement.push(filterItem);
+          setFilter([...filter.slice(0, -1), lastElement]);
+        }
       } else {
-        // Start a new group
+        // Start a new group with the new item
         setFilter([...filter, [filterItem]]);
       }
     }
