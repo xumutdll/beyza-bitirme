@@ -5,7 +5,7 @@ export type Channels =
   | "file-path"
   | "get-initial-data"
   | "apply-filter"
-  | "apply-sorter";
+  | "apply-grouper";
 
 const electronHandler = {
   ipcRenderer: {

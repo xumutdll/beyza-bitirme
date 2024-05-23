@@ -9,7 +9,7 @@ let excelPath: string;
 let filteredJsonData: any[] = [];
 
 const filteredSheetName = "Filtered Data";
-const sortedSheetName = "Sorted Data";
+const groupedSheetName = "Sorted Data";
 
 ipcMain.on("file-path", async (event, filePath) => {
   excelPath = filePath;
@@ -75,28 +75,31 @@ ipcMain.on("apply-filter", async (event, filter) => {
   }
 });
 
-ipcMain.on("apply-sorter", async (event, sorter) => {
+ipcMain.on("apply-grouper", async (event, grouper) => {
   try {
-    const data = workbook.SheetNames.includes(filteredSheetName)
+    let data = workbook.SheetNames.includes(filteredSheetName)
       ? filteredJsonData
       : jsonData;
 
-    sorter.sort(
-      (a: any, b: any) => parseInt(a.priority) - parseInt(b.priority)
+    grouper.sort(
+      (a: any, b: any) => parseInt(b.priority) - parseInt(a.priority)
     );
-    // const newWorksheet = xlsx.utils.json_to_sheet(data);
 
-    // if (!workbook.Sheets[filteredSheetName]) {
-    //   xlsx.utils.book_append_sheet(workbook, newWorksheet, sortedSheetName);
-    // } else {
-    //   workbook.Sheets[filteredSheetName] = newWorksheet;
-    // }
+    // Here we apply our grouper to data.
 
-    // await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    const newWorksheet = xlsx.utils.json_to_sheet(data);
 
-    event.reply("apply-sorter-reply", [true, "Sıralama uygulandı."]);
+    if (!workbook.Sheets[groupedSheetName]) {
+      xlsx.utils.book_append_sheet(workbook, newWorksheet, groupedSheetName);
+    } else {
+      workbook.Sheets[groupedSheetName] = newWorksheet;
+    }
+
+    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+
+    event.reply("apply-grouper-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {
     console.error("Error applying sorter:", error);
-    event.reply("apply-sorter-reply", [false, "Sıralama uygulanamadı."]);
+    event.reply("apply-grouper-reply", [false, "Sıralama uygulanamadı."]);
   }
 });
