@@ -1,6 +1,5 @@
 import { ipcMain } from "electron";
 import xlsx from "xlsx";
-import fs from "fs";
 
 let jsonData: any[] = [];
 let headers: string[] = [];
@@ -18,23 +17,20 @@ ipcMain.on("file-path", async (event, filePath) => {
   excelPath = filePath;
   const workbook = xlsx.readFile(excelPath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  jsonData = xlsx.utils.sheet_to_json(worksheet, {
-    raw: false,
-  }) as any[];
+  jsonData = xlsx.utils.sheet_to_json(worksheet, { raw: true }) as any[];
 
   if (jsonData.length > 0) {
     headers = Object.keys(jsonData[0]);
 
     const uniqueValuesMap: { [key: string]: Set<any> } = {};
+
     headers.forEach((header) => {
       uniqueValuesMap[header] = new Set();
     });
 
     jsonData.forEach((item) => {
       headers.forEach((header) => {
-        if (item[header]) {
-          uniqueValuesMap[header].add(item[header]);
-        }
+        uniqueValuesMap[header].add(item[header]);
       });
     });
 
