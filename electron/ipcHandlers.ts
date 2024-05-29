@@ -1,19 +1,22 @@
 import { ipcMain } from "electron";
 import xlsx from "xlsx";
+import fs from "fs";
 
 let jsonData: any[] = [];
 let headers: string[] = [];
 let uniqueValuesObject: { [key: string]: any[] } = {};
-let workbook: any;
+let newWorkbook: any;
 let excelPath: string;
 let filteredJsonData: any[] = [];
+let newFilePath: string = "";
 
+const newExcelFileName = "Edited";
 const filteredSheetName = "Filtered Data";
 const groupedSheetName = "Sorted Data";
 
 ipcMain.on("file-path", async (event, filePath) => {
   excelPath = filePath;
-  workbook = xlsx.readFile(excelPath);
+  const workbook = xlsx.readFile(excelPath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   jsonData = xlsx.utils.sheet_to_json(worksheet, {
     raw: false,
@@ -47,7 +50,7 @@ ipcMain.on("get-initial-data", (event) => {
 
 ipcMain.on("apply-filter", async (event, filter) => {
   try {
-    const filteredData = jsonData.filter((item) => {
+    filteredJsonData = jsonData.filter((item) => {
       return !filter.some((condition: any) => {
         if (Array.isArray(condition)) {
           return condition.every((cond) => item[cond.header] === cond.value);
@@ -56,17 +59,27 @@ ipcMain.on("apply-filter", async (event, filter) => {
         }
       });
     });
-    filteredJsonData = filteredData;
 
-    const newWorksheet = xlsx.utils.json_to_sheet(filteredData);
+    const newWorksheet = xlsx.utils.json_to_sheet(filteredJsonData);
+    newWorkbook = xlsx.utils.book_new();
+    newFilePath =
+      excelPath.substring(0, excelPath.lastIndexOf("\\")) +
+      "\\" +
+      newExcelFileName +
+      ".xlsx";
 
-    if (!workbook.Sheets[filteredSheetName]) {
-      xlsx.utils.book_append_sheet(workbook, newWorksheet, filteredSheetName);
-    } else {
-      workbook.Sheets[filteredSheetName] = newWorksheet;
-    }
+    xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, filteredSheetName);
+    await xlsx.writeFile(newWorkbook, newFilePath);
 
-    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    // ------------ This writes the same wordbook!
+    // if (!workbook.Sheets[filteredSheetName]) {
+    //   xlsx.utils.book_append_sheet(workbook, newWorksheet, filteredSheetName);
+    // } else {
+    //   workbook.Sheets[filteredSheetName] = newWorksheet;
+    // }
+
+    // await xlsx.writeFile(workbook, excelPath);
+    // --------------------
 
     event.reply("apply-filter-reply", [true, "Filtre uygulandı."]);
   } catch (error) {
@@ -76,26 +89,33 @@ ipcMain.on("apply-filter", async (event, filter) => {
 });
 
 ipcMain.on("apply-grouping", async (event, grouper) => {
+  let data;
+
   try {
-    let data = workbook.SheetNames.includes(filteredSheetName)
-      ? filteredJsonData
-      : jsonData;
+    if (newFilePath === "") {
+      data = jsonData; // No filter applied in this session, continue with unfiltered excel data
+      newFilePath =
+        excelPath.substring(0, excelPath.lastIndexOf("\\")) +
+        "\\" +
+        newExcelFileName +
+        ".xlsx"; // Since no filter applied, this variable is empty, so we create a new file path
+      newWorkbook = xlsx.utils.book_new(); // Also there is no workbook, so we create a new one
+    } else {
+      data = filteredJsonData; // Filter applied in this session, continue with filtered excel data
+    }
 
     grouper.sort(
       (a: any, b: any) => parseInt(b.priority) - parseInt(a.priority)
     );
 
+    console.log(grouper);
+
     // Here we apply our grouper to data.
 
     const newWorksheet = xlsx.utils.json_to_sheet(data);
 
-    if (!workbook.Sheets[groupedSheetName]) {
-      xlsx.utils.book_append_sheet(workbook, newWorksheet, groupedSheetName);
-    } else {
-      workbook.Sheets[groupedSheetName] = newWorksheet;
-    }
-
-    await xlsx.writeFile(workbook, excelPath); // Use the corrected path variable
+    xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, groupedSheetName);
+    await xlsx.writeFile(newWorkbook, newFilePath);
 
     event.reply("apply-grouping-reply", [true, "Sıralama uygulandı."]);
   } catch (error) {
