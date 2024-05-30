@@ -3,6 +3,7 @@ import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import Swal from "sweetalert2";
+import { useOutletContext } from "react-router-dom";
 
 import "./css/main.css";
 
@@ -13,7 +14,8 @@ const Sort: React.FC = () => {
     {}
   );
   const [selectedHeader, setSelectedHeader] = useState(null);
-  const [sorter, setSorter] = useState<any[]>([]);
+
+  const { sorter, setSorter } = useOutletContext<PanelContextType>();
 
   useEffect(() => {
     if (!hasSentIpc.current) {

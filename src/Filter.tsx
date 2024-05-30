@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { ListBox } from "primereact/listbox";
 import { Button } from "primereact/button";
 import Swal from "sweetalert2";
+import { useOutletContext } from "react-router-dom";
 
 import "./css/main.css";
 
@@ -13,7 +14,8 @@ const Filter: React.FC = () => {
   );
   const [selectedHeader, setSelectedHeader] = useState(null);
   const [filterType, setFilterType] = useState(true); // true is 'or' false is 'and'
-  const [filter, setFilter] = useState<any[]>([]);
+
+  const { filter, setFilter } = useOutletContext<PanelContextType>();
 
   useEffect(() => {
     if (!hasSentIpc.current) {

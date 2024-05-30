@@ -1,14 +1,3 @@
-interface VersionInfo {
-  update: boolean;
-  version: string;
-  newVersion?: string;
-}
-
-interface ErrorType {
-  message: string;
-  error: Error;
-}
-
 interface PanelContextType {
   filter: any[]; // You can replace 'any' with a more specific type if available
   setFilter: React.Dispatch<React.SetStateAction<any[]>>;

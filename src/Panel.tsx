@@ -5,6 +5,9 @@ const Panel: React.FC = () => {
   const [dataLength, setDataLength] = useState(0);
   const hasSentIpc = useRef(false);
 
+  const [sorter, setSorter] = useState<any[]>([]);
+  const [filter, setFilter] = useState<any[]>([]);
+
   useEffect(() => {
     if (!hasSentIpc.current) {
       window.electron.ipcRenderer
@@ -50,7 +53,8 @@ const Panel: React.FC = () => {
           Sırala
         </NavLink>
       </div>
-      <Outlet />
+      <Outlet context={{ filter, setFilter, sorter, setSorter }} />
+
       <div className="absolute bottom-0 -mb-4 ml-5 text-xs">
         Okunan satır sayısı: {dataLength}
       </div>
