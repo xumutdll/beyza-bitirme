@@ -51,7 +51,7 @@ const Panel: React.FC = () => {
         </NavLink>
       </div>
       <Outlet />
-      <div className="absolute bottom-0 -mb-4 ml-6 text-xs">
+      <div className="absolute bottom-0 -mb-4 ml-5 text-xs">
         Okunan satır sayısı: {dataLength}
       </div>
     </div>
