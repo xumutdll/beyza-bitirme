@@ -15,9 +15,13 @@ const groupedSheetName = "Sorted Data";
 
 ipcMain.on("file-path", async (event, filePath) => {
   excelPath = filePath;
-  const workbook = xlsx.readFile(excelPath);
+  const workbook = xlsx.readFile(excelPath, { type: "file" });
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  jsonData = xlsx.utils.sheet_to_json(worksheet, { raw: true }) as any[];
+  jsonData = xlsx.utils.sheet_to_json(worksheet, {
+    raw: false,
+    dateNF: "dd-mm-yyyy",
+  }) as any[];
+  console.log(jsonData.length);
 
   if (jsonData.length > 0) {
     headers = Object.keys(jsonData[0]);
