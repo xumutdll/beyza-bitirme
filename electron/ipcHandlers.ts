@@ -21,7 +21,6 @@ ipcMain.on("file-path", async (event, filePath) => {
     raw: false,
     dateNF: "dd-mm-yyyy",
   }) as any[];
-  console.log(jsonData.length);
 
   if (jsonData.length > 0) {
     headers = Object.keys(jsonData[0]);
@@ -46,6 +45,10 @@ ipcMain.on("file-path", async (event, filePath) => {
 
 ipcMain.on("get-initial-data", (event) => {
   event.reply("get-initial-data-reply", uniqueValuesObject);
+});
+
+ipcMain.on("get-data-length", (event) => {
+  event.reply("get-data-length-reply", jsonData.length);
 });
 
 ipcMain.on("apply-filter", async (event, filter) => {

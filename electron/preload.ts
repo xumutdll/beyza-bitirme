@@ -4,6 +4,7 @@ import { ipcRenderer, contextBridge, IpcRendererEvent } from "electron";
 export type Channels =
   | "file-path"
   | "get-initial-data"
+  | "get-data-length"
   | "apply-filter"
   | "apply-grouping";
 
