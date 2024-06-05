@@ -107,61 +107,63 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
       data = filteredJsonData; // Filter applied in this session, continue with filtered excel data
     }
 
-    grouper = [
-      // {
-      //   header: "BODY_TYPE",
-      //   value: "REGULAR CARGO VAN",
-      //   priority: "1",
-      //   number: "10",
-      // },
-      // {
-      //   header: "BODY_TYPE",
-      //   value: "DOUBLE CAB IN VAN",
-      //   priority: "1",
-      //   number: "2",
-      // },
-      // { header: "BODY_TYPE", value: "CAMPER", priority: "1", number: "2" },
-      // {
-      //   header: "BODY_TYPE",
-      //   value: "BUS M1 LRF",
-      //   priority: "1",
-      //   number: "4",
-      // },
-      // {
-      //   header: "SIDE_LOAD_DOOR",
-      //   value: "RIGHT SIDE LOAD DOORS",
-      //   priority: "1",
-      //   number: "4",
-      // },
-      // {
-      //   header: "SIDE_LOAD_DOOR",
-      //   value: "DUAL SIDE LOAD DOORS",
-      //   priority: "1",
-      //   number: "4",
-      // },
-      // {
-      //   header: "SIDE_LOAD_DOOR",
-      //   value: "KERBSIDE SIDE LOAD DOORS",
-      //   priority: "1",
-      //   number: "1",
-      // },
-      {
-        header: "SERIES_LENGTH",
-        value: "ALL SHORT SERIES",
-        priority: "2",
-        number: "4",
-      },
-      {
-        header: "SERIES_LENGTH",
-        value: "ALL LONG SERIES",
-        priority: "2",
-        number: "4",
-      },
-    ];
+    // grouper = [
+    //   // {
+    //   //   header: "BODY_TYPE",
+    //   //   value: "REGULAR CARGO VAN",
+    //   //   priority: "1",
+    //   //   number: "10",
+    //   // },
+    //   // {
+    //   //   header: "BODY_TYPE",
+    //   //   value: "DOUBLE CAB IN VAN",
+    //   //   priority: "1",
+    //   //   number: "2",
+    //   // },
+    //   // { header: "BODY_TYPE", value: "CAMPER", priority: "1", number: "2" },
+    //   // {
+    //   //   header: "BODY_TYPE",
+    //   //   value: "BUS M1 LRF",
+    //   //   priority: "1",
+    //   //   number: "4",
+    //   // },
+    //   {
+    //     header: "SIDE_LOAD_DOOR",
+    //     value: "RIGHT SIDE LOAD DOORS",
+    //     priority: "1",
+    //     number: "4",
+    //   },
+    //   {
+    //     header: "SIDE_LOAD_DOOR",
+    //     value: "DUAL SIDE LOAD DOORS",
+    //     priority: "1",
+    //     number: "4",
+    //   },
+    //   {
+    //     header: "SIDE_LOAD_DOOR",
+    //     value: "KERBSIDE SIDE LOAD DOORS",
+    //     priority: "1",
+    //     number: "1",
+    //   },
+    //   // {
+    //   //   header: "SERIES_LENGTH",
+    //   //   value: "ALL SHORT SERIES",
+    //   //   priority: "2",
+    //   //   number: "4",
+    //   // },
+    //   // {
+    //   //   header: "SERIES_LENGTH",
+    //   //   value: "ALL LONG SERIES",
+    //   //   priority: "2",
+    //   //   number: "4",
+    //   // },
+    // ];
 
-    grouper.sort(
-      (a: any, b: any) => parseInt(a.priority) - parseInt(b.priority)
-    );
+    grouper = grouper.filter((group: any) => group.priority == 1);
+
+    // grouper.sort(
+    //   (a: any, b: any) => parseInt(a.priority) - parseInt(b.priority)
+    // );
     // ----------------------------------------------------------------------------
 
     let dataByDatesArr: any[][] = uniqueValuesObject["Segmentation Date"].map(
@@ -170,78 +172,101 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
       }
     );
 
-    // // let grouped: any = uniqueValuesObject["Segmentation Date"].map(() => ({}));
+    // grouper = transformData(grouper);
+    // console.log(grouper);
 
-    // // dataByDatesArr.forEach((dailyData, dayIndex) => {
-    // //   grouper.forEach((g: any) => {
-    // //     if (g.priority == 1) {
-    // //       let f = dailyData.filter((item) => item[g.header] === g.value);
-    // //       grouped[dayIndex][g.value] = f;
-    // //     }
-    // //   });
-    // // });
-    // // console.log(grouped);
+    // // Label for the outer loop to facilitate breaking out of nested loops
+    // for (let dayIndex = 0; dayIndex < dataByDatesArr.length; dayIndex++) {
+    //   let dailyData = dataByDatesArr[dayIndex];
+    //   groupLoop: for (
+    //     let groupIndex = 0;
+    //     groupIndex < grouper.length;
+    //     groupIndex++
+    //   ) {
+    //     let g = grouper[groupIndex];
+    //     let totalNum = 0; // Total items grouped for this configuration
+    //     let arrNum = 0; // Index for the value and number arrays in grouper
+    //     let num = 0; // Count for the current value being grouped
 
-    grouper = transformData(grouper);
-    console.log(grouper);
+    //     for (let i = 0; i < dailyData.length; i++) {
+    //       if (
+    //         dailyData[i][g.header] === g.value[arrNum] &&
+    //         totalNum < g.total
+    //       ) {
+    //         num++;
+    //         totalNum++;
+    //         if (num >= g.number[arrNum]) {
+    //           arrNum = (arrNum + 1) % g.value.length; // Cycle through the values array
+    //           num = 0; // Reset count for the next value
+    //         }
+    //         // Swap the current data to the start of the day's array to 'group' it
+    //         let temp = dailyData[i];
+    //         dailyData[i] = dailyData[totalNum - 1];
+    //         dailyData[totalNum - 1] = temp;
+    //       }
+    //     }
+    //     if (totalNum < g.total) {
+    //       // Not enough data to fulfill the grouping requirement for this day
+    //       continue groupLoop; // Skip to the next day or handle as needed
+    //     }
+    //   }
+    // }
 
-    // Label for the outer loop to facilitate breaking out of nested loops
-    for (let dayIndex = 0; dayIndex < dataByDatesArr.length; dayIndex++) {
-      let dailyData = dataByDatesArr[dayIndex];
-      groupLoop: for (
-        let groupIndex = 0;
-        groupIndex < grouper.length;
-        groupIndex++
-      ) {
-        let g = grouper[groupIndex];
-        let totalNum = 0;
-        let arrNum = 0;
-        let num = 0;
+    function applyGrouping() {
+      let result: any = [];
 
-        for (let i = 0; i < dailyData.length; i++) {
-          if (totalNum < g.total) {
-            if (dailyData[i][g.header] === g.value[arrNum]) {
-              num++;
-              totalNum++;
-              if (num >= g.number[arrNum]) {
-                num = 0;
-                arrNum++;
-                if (arrNum >= g.value.length) {
-                  arrNum = 0; // Reset arrNum for the next possible group
-                  num = 0; // Reset num as well
-                }
-              }
-            } else {
-              let foundIndex = -1;
-              for (let j = i + 1; j < dailyData.length; j++) {
-                if (dailyData[j][g.header] === g.value[arrNum]) {
-                  foundIndex = j;
-                  break;
-                }
-              }
-              if (foundIndex !== -1) {
-                // Swap current item with found item
-                let temp = dailyData[i];
-                dailyData[i] = dailyData[foundIndex];
-                dailyData[foundIndex] = temp;
-                num++;
-                totalNum++;
-              } else {
-                // No matching item found, need to break out of this group loop and skip to next day
-                continue groupLoop;
+      dataByDatesArr.forEach((dailyData) => {
+        let dayResult: any = [];
+        let remainingData = [...dailyData]; // Make a copy of the daily data to track remaining items
+        let cycles = true;
+
+        while (cycles) {
+          cycles = grouper.every((group: any) => {
+            let groupCount = 0;
+            // Attempt to form groups and track grouped items
+            for (
+              let i = 0;
+              i < remainingData.length && groupCount < group.number;
+              i++
+            ) {
+              if (remainingData[i][group.header] === group.value) {
+                dayResult.push(remainingData[i]);
+                groupCount++;
               }
             }
-          } else {
-            // Reset counters for the next group
-            totalNum = 0;
-            arrNum = 0;
-            num = 0;
+
+            // If we could not form a complete group, keep the items as is
+            if (groupCount < group.number) {
+              return false; // Stop cycling, can't form more complete groups
+            } else {
+              // Remove grouped items from remainingData
+              remainingData = remainingData.filter(
+                (item) =>
+                  !(
+                    item[group.header] === group.value &&
+                    dayResult.includes(item)
+                  )
+              );
+              return true; // Continue cycling
+            }
+          });
+
+          // Add remaining items that weren't grouped this cycle
+          if (!cycles) {
+            dayResult.push(...remainingData);
+            remainingData = []; // Clear remaining data since all have been added to the result
           }
         }
-      }
+
+        result.push(dayResult);
+      });
+
+      return result;
     }
 
-    let flattenedData = dataByDatesArr.flat();
+    let groupedData = applyGrouping();
+
+    let flattenedData = groupedData.flat();
 
     // ----------------------------------------------------------------------------
     const newWorksheet = xlsx.utils.json_to_sheet(flattenedData);
@@ -259,17 +284,6 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
     event.reply("apply-grouping-reply", [false, "Sıralama uygulanamadı."]);
   }
 });
-
-// data.sort((a, b) => {  // It does sort automatically on filter idk how
-//   const dateA = parseDate(a["Segmentation Date"]).getTime(); // Convert Date to timestamp
-//   const dateB = parseDate(b["Segmentation Date"]).getTime(); // Convert Date to timestamp
-//   return dateA - dateB; // Compare timestamps
-// });
-
-// function parseDate(dateStr: string) {
-//   const [month, day, year] = dateStr.split("/").map(Number);
-//   return new Date(year + 2000, month - 1, day);
-// }
 
 function transformData(data: any) {
   const result: any = [];
