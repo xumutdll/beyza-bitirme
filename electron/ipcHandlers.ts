@@ -9,7 +9,7 @@ let excelPath: string;
 let filteredJsonData: any[] = [];
 let newFilePath: string = "";
 
-const newExcelFileName = "Edited";
+const newExcelFileName = "Güncel Liste";
 const filteredSheetName = "Filtered Data";
 const groupedSheetName = "Sorted Data";
 
@@ -92,7 +92,7 @@ ipcMain.on("apply-filter", async (event, filter) => {
 });
 
 ipcMain.on("apply-grouping", async (event, grouper) => {
-  let data;
+  let data: any;
 
   try {
     if (newFilePath === "") {
@@ -107,15 +107,147 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
       data = filteredJsonData; // Filter applied in this session, continue with filtered excel data
     }
 
+    grouper = [
+      // {
+      //   header: "BODY_TYPE",
+      //   value: "REGULAR CARGO VAN",
+      //   priority: "1",
+      //   number: "10",
+      // },
+      // {
+      //   header: "BODY_TYPE",
+      //   value: "DOUBLE CAB IN VAN",
+      //   priority: "1",
+      //   number: "2",
+      // },
+      // { header: "BODY_TYPE", value: "CAMPER", priority: "1", number: "2" },
+      // {
+      //   header: "BODY_TYPE",
+      //   value: "BUS M1 LRF",
+      //   priority: "1",
+      //   number: "4",
+      // },
+      // {
+      //   header: "SIDE_LOAD_DOOR",
+      //   value: "RIGHT SIDE LOAD DOORS",
+      //   priority: "1",
+      //   number: "4",
+      // },
+      // {
+      //   header: "SIDE_LOAD_DOOR",
+      //   value: "DUAL SIDE LOAD DOORS",
+      //   priority: "1",
+      //   number: "4",
+      // },
+      // {
+      //   header: "SIDE_LOAD_DOOR",
+      //   value: "KERBSIDE SIDE LOAD DOORS",
+      //   priority: "1",
+      //   number: "1",
+      // },
+      {
+        header: "SERIES_LENGTH",
+        value: "ALL SHORT SERIES",
+        priority: "2",
+        number: "5",
+      },
+      {
+        header: "SERIES_LENGTH",
+        value: "ALL LONG SERIES",
+        priority: "2",
+        number: "5",
+      },
+    ];
+
     grouper.sort(
-      (a: any, b: any) => parseInt(b.priority) - parseInt(a.priority)
+      (a: any, b: any) => parseInt(a.priority) - parseInt(b.priority)
+    );
+    // ----------------------------------------------------------------------------
+
+    let dataByDatesArr: any[][] = uniqueValuesObject["Segmentation Date"].map(
+      (date) => {
+        return data.filter((item: any) => item["Segmentation Date"] === date);
+      }
     );
 
+    // // let grouped: any = uniqueValuesObject["Segmentation Date"].map(() => ({}));
+
+    // // dataByDatesArr.forEach((dailyData, dayIndex) => {
+    // //   grouper.forEach((g: any) => {
+    // //     if (g.priority == 1) {
+    // //       let f = dailyData.filter((item) => item[g.header] === g.value);
+    // //       grouped[dayIndex][g.value] = f;
+    // //     }
+    // //   });
+    // // });
+    // // console.log(grouped);
+
+    grouper = transformData(grouper);
     console.log(grouper);
+    let num = 0;
+    let arrNum = 0;
+    let totalNum = 0;
 
-    // Here we apply our grouper to data.
+    dataByDatesArr.forEach((dailyData, dayIndex) => {
+      grouper.forEach((g: any) => {
+        // Her priority için bir döngü
+        totalNum = 0;
+        arrNum = 0;
+        num = 0;
+        for (let i = 0; i < dailyData.length; i++) {
+          if (totalNum < g.total) {
+            if (dailyData[i][g.header] === g.value[arrNum]) {
+              // Found the expected value, increment counters
+              num++;
+              totalNum++;
+              if (num >= g.number[arrNum]) {
+                num = 0;
+                arrNum++;
+                if (arrNum >= g.value.length) {
+                  // Reset for next cycle or exit if done
+                  arrNum = 0;
+                  num = 0;
+                }
+              }
+            } else {
+              // Search in the remaining array and swap if found
+              let foundIndex = -1;
+              for (let j = i + 1; j < dailyData.length; j++) {
+                if (dailyData[j][g.header] === g.value[arrNum]) {
+                  foundIndex = j;
+                  break;
+                }
+              }
+              if (foundIndex !== -1) {
+                // Swap current item with found item
+                const temp = dailyData[i];
+                dailyData[i] = dailyData[foundIndex];
+                dailyData[foundIndex] = temp;
+                // Correctly increment num since we now have a matching item
+                num++;
+                totalNum++;
+              } else {
+                // There is no matching item, we gotta check other days.
+                break;
+              }
+            }
+          } else {
+            totalNum = 0;
+            arrNum = 0;
+            num = 0;
+          }
+        }
+      });
+    });
 
-    const newWorksheet = xlsx.utils.json_to_sheet(data);
+    let flattenedData = dataByDatesArr.flat();
+
+    // ----------------------------------------------------------------------------
+    const newWorksheet = xlsx.utils.json_to_sheet(flattenedData);
+
+    if (newWorkbook.SheetNames.includes(groupedSheetName)) {
+      delete newWorkbook.Sheets[groupedSheetName];
+    }
 
     xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, groupedSheetName);
     await xlsx.writeFile(newWorkbook, newFilePath);
@@ -126,3 +258,43 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
     event.reply("apply-grouping-reply", [false, "Sıralama uygulanamadı."]);
   }
 });
+
+// data.sort((a, b) => {  // It does sort automatically on filter idk how
+//   const dateA = parseDate(a["Segmentation Date"]).getTime(); // Convert Date to timestamp
+//   const dateB = parseDate(b["Segmentation Date"]).getTime(); // Convert Date to timestamp
+//   return dateA - dateB; // Compare timestamps
+// });
+
+// function parseDate(dateStr: string) {
+//   const [month, day, year] = dateStr.split("/").map(Number);
+//   return new Date(year + 2000, month - 1, day);
+// }
+
+function transformData(data: any) {
+  const result: any = [];
+
+  data.forEach((item: any) => {
+    const number = parseInt(item.number, 10);
+    // Find if the item's header already exists in the result
+    const existingGroup = result.find(
+      (group: any) => group.header === item.header
+    );
+    if (existingGroup) {
+      // If it exists, push to value and number arrays and update total
+      existingGroup.value.push(item.value);
+      existingGroup.number.push(number);
+      existingGroup.total += number;
+    } else {
+      // Otherwise, create a new group entry with initial total
+      result.push({
+        header: item.header,
+        priority: item.priority,
+        value: [item.value],
+        number: [number],
+        total: number,
+      });
+    }
+  });
+
+  return result;
+}
