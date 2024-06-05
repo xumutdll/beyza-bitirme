@@ -149,13 +149,13 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
         header: "SERIES_LENGTH",
         value: "ALL SHORT SERIES",
         priority: "2",
-        number: "5",
+        number: "4",
       },
       {
         header: "SERIES_LENGTH",
         value: "ALL LONG SERIES",
         priority: "2",
-        number: "5",
+        number: "4",
       },
     ];
 
@@ -184,33 +184,34 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
 
     grouper = transformData(grouper);
     console.log(grouper);
-    let num = 0;
-    let arrNum = 0;
-    let totalNum = 0;
 
-    dataByDatesArr.forEach((dailyData, dayIndex) => {
-      grouper.forEach((g: any) => {
-        // Her priority için bir döngü
-        totalNum = 0;
-        arrNum = 0;
-        num = 0;
+    // Label for the outer loop to facilitate breaking out of nested loops
+    for (let dayIndex = 0; dayIndex < dataByDatesArr.length; dayIndex++) {
+      let dailyData = dataByDatesArr[dayIndex];
+      groupLoop: for (
+        let groupIndex = 0;
+        groupIndex < grouper.length;
+        groupIndex++
+      ) {
+        let g = grouper[groupIndex];
+        let totalNum = 0;
+        let arrNum = 0;
+        let num = 0;
+
         for (let i = 0; i < dailyData.length; i++) {
           if (totalNum < g.total) {
             if (dailyData[i][g.header] === g.value[arrNum]) {
-              // Found the expected value, increment counters
               num++;
               totalNum++;
               if (num >= g.number[arrNum]) {
                 num = 0;
                 arrNum++;
                 if (arrNum >= g.value.length) {
-                  // Reset for next cycle or exit if done
-                  arrNum = 0;
-                  num = 0;
+                  arrNum = 0; // Reset arrNum for the next possible group
+                  num = 0; // Reset num as well
                 }
               }
             } else {
-              // Search in the remaining array and swap if found
               let foundIndex = -1;
               for (let j = i + 1; j < dailyData.length; j++) {
                 if (dailyData[j][g.header] === g.value[arrNum]) {
@@ -220,25 +221,25 @@ ipcMain.on("apply-grouping", async (event, grouper) => {
               }
               if (foundIndex !== -1) {
                 // Swap current item with found item
-                const temp = dailyData[i];
+                let temp = dailyData[i];
                 dailyData[i] = dailyData[foundIndex];
                 dailyData[foundIndex] = temp;
-                // Correctly increment num since we now have a matching item
                 num++;
                 totalNum++;
               } else {
-                // There is no matching item, we gotta check other days.
-                break;
+                // No matching item found, need to break out of this group loop and skip to next day
+                continue groupLoop;
               }
             }
           } else {
+            // Reset counters for the next group
             totalNum = 0;
             arrNum = 0;
             num = 0;
           }
         }
-      });
-    });
+      }
+    }
 
     let flattenedData = dataByDatesArr.flat();
 
